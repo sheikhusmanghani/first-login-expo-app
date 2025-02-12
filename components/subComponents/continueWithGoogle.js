@@ -26,12 +26,14 @@ const GoogleButton = ({ title = "Sign in with Google", onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
+    width: "70%",
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: 20,
+    borderRadius: 35,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -42,7 +44,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     backgroundColor: "#FFF",
-    padding: 5,
+    // padding: 2,
     borderRadius: 4,
     marginRight: 10,
   },

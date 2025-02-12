@@ -5,19 +5,20 @@ import {
   TextInput,
   Button,
   Alert,
+  Image,
 } from "react-native";
-import styles from "../GlobalCSS.js";
+import styles from "../../GlobalCSS.js";
 import React from "react";
-import CustomButton from "./subComponents/Button.js";
-import Input from "./subComponents/Input.js";
-import GoogleButton from "./subComponents/continueWithGoogle.js";
+import CustomButton from "../subComponents/Button.js";
+import Input from "../subComponents/Input.js";
+import GoogleButton from "../subComponents/continueWithGoogle.js";
 
-export default Home = () => {
+export default SignIn = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.heading}> Welcome To ZamZama </Text>
-        <Text style={styles.subHeading}> Join Now </Text>
+        <Text style={styles.heading}> Welcome To ZomaTo</Text>
+        {/* <Text style={styles.subHeading}> Join Now </Text> */}
       </View>
 
       <View
@@ -28,9 +29,17 @@ export default Home = () => {
           alignItems: "center",
         }}
       >
+        <Image
+          source={{
+            uri: "https://img.icons8.com/avantgarde/100/user-male-circle.png",
+          }}
+          alt="UserIcon"
+          style={{ width: 100, height: 120 }}
+        />
         <Input
-          onChangeText={""}
+          // inlineImageLeft="https://img.icons8.com/clouds/100/user-male-circle.png"
           placeholder="Enter Your Email"
+          onChangeText={""}
           secureTextEntry={false}
           // value={}
           // style={{tetran}}
@@ -38,13 +47,14 @@ export default Home = () => {
         <Input
           onChangeText={""}
           placeholder="Enter Your Password"
-          secureTextEntry={false}
+          secureTextEntry={true}
           // value={}
         />
         <CustomButton title={"Join Us"} />
       </View>
 
-      <View style={{ alignItems: "center" }}>
+      {/* google btn */}
+      <View style={{ alignItems: "center", marginTop: 10 }}>
         <GoogleButton onPress={() => Alert.alert("Google Sign-in Clicked!")} />
       </View>
     </View>

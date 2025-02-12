@@ -20,9 +20,9 @@ const CustomButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    width: "80%",
+    width: "70%",
     paddingVertical: 10, 
-    borderRadius: 8,
+    borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
     elevation: 3, // Android shadow
