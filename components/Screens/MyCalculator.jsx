@@ -1,47 +1,41 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, View, SafeAreaView } from "react-native";
+import React, { useState, memo } from "react";
 import AppBarNativePaper from "../subComponents/AppbarRNP";
 import CalculatorKey from "../subComponents/CalculatorKey";
 import CalculatorOutput from "../subComponents/CalculatorOutput";
 
-const MyCalculator = () => {
-  const [result, setResult] = React.useState("Hi,");
+const MyCalculator = memo(() => {
+  const [result, setResult] = useState("");
 
   return (
-    <View>
-      {/* navbar */}
-      <View>
-        <AppBarNativePaper />
-      </View>
+    <SafeAreaView style={styles.container}>
+      <AppBarNativePaper />
 
-      {/* output */}
       <View style={styles.output}>
         <CalculatorOutput result={result} />
       </View>
 
-      {/* keys of caclulator */}
-      <View style={styles.input}>
-        <CalculatorKey setResult={{ setResult }} />
+      <View style={styles.keys}>
+        <CalculatorKey setResult={setResult} />
       </View>
-    </View>
+    </SafeAreaView>
   );
-};
-
-export default MyCalculator;
+});
 
 const styles = StyleSheet.create({
-  output: {
-    display: "flex",
-    backgroundColor: "#f7f7f7",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    height: 250,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  input: {
-    height: 415,
-    width: "360",
-    display: "flex",
+  output: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "#f7f7f7",
+  },
+  keys: {
+    flex: 2,
     justifyContent: "center",
-    alignItems: "center",
   },
 });
+
+export default MyCalculator;

@@ -1,91 +1,94 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { Button, Icon, IconButton, MD3Colors } from "react-native-paper";
+import React, { useCallback, memo } from "react";
+import { StyleSheet, Text, Pressable, View } from "react-native";
+import { Icon } from "react-native-paper";
 
-// main component
 const CalculatorKey = ({ setResult }) => {
-  console.log(setResult); // nooooo
-  //
-  /// A key component
-  const Key = ({ text, Bcolor = "white", Tobj }) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.6}
-        style={[styles.key, { backgroundColor: Bcolor }]}
-      >
-        <Text style={[styles.text, { ...Tobj }]}>{text}</Text>
-      </TouchableOpacity>
-    );
-  };
+  const handleCalculation = useCallback(
+    (text) => {
+      const operations = {
+        CLR: () => "",
+        "⌫": (prev) => prev.slice(0, -1),
+        "●": (prev) => prev + ".",
+        "➗": (prev) => prev + "/",
+        "✖": (prev) => prev + "*",
+        "➖": (prev) => prev + "-",
+        "➕": (prev) => prev + "+",
+        "%": (prev) => (parseFloat(prev) / 100 || "Error").toString(),
+        "=": (prev) => {
+          try {
+            return Function(`'use strict'; return (${prev})`)().toString();
+          } catch {
+            return "Error";
+          }
+        },
+      };
+
+      setResult((prev) =>
+        operations[text] ? operations[text](prev) : prev + text
+      );
+    },
+    [setResult]
+  );
+
+  const Key = memo(({ text, bg = "white", style }) => (
+    <Pressable
+      onPress={() => handleCalculation(text)}
+      style={({ pressed }) => [
+        styles.key,
+        { backgroundColor: bg, opacity: pressed ? 0.7 : 1 },
+      ]}
+    >
+      {typeof text === "string" ? (
+        <Text style={[styles.text, style]}>{text}</Text>
+      ) : (
+        <Icon source="screen-rotation" size={25} color="#5e5d0d" />
+      )}
+    </Pressable>
+  ));
 
   return (
-    <View
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        paddingTop: 10,
-      }}
-      onpress={() => setResult("Hiwe")}
-    >
-      <Key
-        text="CLR"
-        Bcolor="crimson"
-        Tobj={{ color: "white", fontWeight: "900" }}
-      />
-
-      <Key text="➗" Bcolor="#fad34d" />
-      <Key text="➕" Bcolor="#fad34d" />
-      <Key text="➖" Bcolor="#fad34d" />
-      <Key text="1" Tobj={{ fontSize: 28 }} />
-      <Key text="2" Tobj={{ fontSize: 28 }} />
-      <Key text="3" Tobj={{ fontSize: 28 }} />
-      <Key text="✖" Tobj={{ fontSize: 26 }} Bcolor="#fad34d" />
-      <Key text="4" Tobj={{ fontSize: 28 }} />
-      <Key text="5" Tobj={{ fontSize: 28 }} />
-      <Key text="6" Tobj={{ fontSize: 28 }} />
-      <Key
-        text={<Icon source="percent" size={33} color="#5e5d0d" />}
-        Bcolor="#fad34d"
-      />
-      <Key text="7" Tobj={{ fontSize: 25 }} />
-      <Key text="8" Tobj={{ fontSize: 25 }} />
-      <Key text="9" Tobj={{ fontSize: 25 }} />
-      <Key text="=" Tobj={{ fontSize: 45 }} Bcolor="#fad34d" />
-      <Key
-        text={<Icon source="screen-rotation" size={25} color="#5e5d0d" />}
-        Tobj={{ fontSize: 25 }}
-      />
-      <Key text="0" Tobj={{ fontSize: 25 }} />
-      <Key text="●" Tobj={{ fontSize: 20 }} />
-      <Key
-        text={<Icon source="backspace" size={25} color="white" />}
-        Bcolor="crimson"
-      />
+    <View style={styles.container}>
+      <Key text="CLR" bg="crimson" style={styles.clearText} />
+      <Key text="➗" bg="#fad34d" />
+      <Key text="➕" bg="#fad34d" />
+      <Key text="⌫" bg="crimson" style={styles.backspace} />
+      {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+        <Key key={num} text={num.toString()} style={styles.number} />
+        ))} */}
+      <Key text="1" style={styles.number} />
+      <Key text="2" style={styles.number} />
+      <Key text="3" style={styles.number} />
+      <Key text="➖" bg="#fad34d" />
+      <Key text="4" style={styles.number} />
+      <Key text="5" style={styles.number} />
+      <Key text="6" style={styles.number} />
+      <Key text="✖" bg="#fad34d" style={styles.operator} />
+      <Key text="7" style={styles.number} />
+      <Key text="8" style={styles.number} />
+      <Key text="9" style={styles.number} />
+      <Key text="%" bg="#fad34d" style={{ fontSize: 30 }} />
+      <Key text={<Icon source="screen-rotation" />} />
+      <Key text="0" style={styles.number} />
+      <Key text="●" style={styles.dot} />
+      <Key text="=" bg="#fad34d" style={styles.equal} />
     </View>
   );
 };
 
-export default CalculatorKey;
-
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    paddingTop: 10,
+  },
   key: {
     width: 70,
     height: 70,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
     borderRadius: 50,
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
     elevation: 4,
   },
   text: {
@@ -93,4 +96,26 @@ const styles = StyleSheet.create({
     color: "#5e5e5e",
     fontWeight: "bold",
   },
+  clearText: {
+    color: "white",
+    fontWeight: "900",
+  },
+  backspace: {
+    color: "white",
+    fontSize: 26,
+  },
+  number: {
+    fontSize: 28,
+  },
+  operator: {
+    fontSize: 26,
+  },
+  dot: {
+    fontSize: 20,
+  },
+  equal: {
+    fontSize: 45,
+  },
 });
+
+export default React.memo(CalculatorKey);
