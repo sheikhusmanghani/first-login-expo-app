@@ -18,7 +18,7 @@ export default SignIn = () => {
     <View style={styles.container}>
       <View>
         <Text style={styles.heading}> Welcome To ZomaTo</Text>
-        {/* <Text style={styles.subHeading}> Join Now </Text> */}
+        <Text style={styles.subHeading}> Join Now </Text>
       </View>
 
       <View

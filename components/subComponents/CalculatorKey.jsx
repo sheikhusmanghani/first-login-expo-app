@@ -51,10 +51,7 @@ const CalculatorKey = ({ setResult }) => {
       <Key text="CLR" bg="crimson" style={styles.clearText} />
       <Key text="➗" bg="#fad34d" />
       <Key text="➕" bg="#fad34d" />
-      <Key text="⌫" bg="crimson" style={styles.backspace} />
-      {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-        <Key key={num} text={num.toString()} style={styles.number} />
-        ))} */}
+      <Key text="⌫" bg="crimson" style={styles.backspace} /> 
       <Key text="1" style={styles.number} />
       <Key text="2" style={styles.number} />
       <Key text="3" style={styles.number} />
@@ -77,6 +74,7 @@ const CalculatorKey = ({ setResult }) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#fff",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",

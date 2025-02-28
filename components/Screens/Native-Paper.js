@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableHighlight,
+} from "react-native";
 import searchicon from "../../assets/search-icon.jpg";
 import {
   ActivityIndicator,
@@ -108,8 +115,22 @@ export default Navbar = () => {
       <Searchbar
         placeholder="Search"
         // onChangeText={setSearchQuery}
-        // value={searchQuery} 
+        // value={searchQuery}
       />
+
+      <Text style={{ marginTop: 10 }}>touchable btn's</Text>
+      <TouchableHighlight
+        underlayColor={"goldenrod"}
+        activeOpacity={0.8}
+        style={{
+          backgroundColor: "gold",
+          padding: 10,
+          borderRadius: 10,
+        }}
+        onPress={() => console.log("pressed")}
+      >
+        <Text>heighlight</Text>
+      </TouchableHighlight>
     </View>
   );
 };
