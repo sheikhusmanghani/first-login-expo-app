@@ -4,17 +4,24 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { Text, TextInput, Button, Dialog, Portal } from "react-native-paper";
+import {
+  Text,
+  TextInput,
+  Button,
+  Dialog,
+  Portal,
+  IconButton,
+  Icon,
+} from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TodoApp = () => {
-  const [visible, setVisible] = React.useState(false);
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
   const [todoText, setTodoText] = React.useState("");
   const [todos, setTodos] = React.useState([]);
+  const [visible, setVisible] = React.useState({}); // ✅ Individual visibility
 
   // get todos from async storage
   React.useEffect(() => {
@@ -26,8 +33,7 @@ const TodoApp = () => {
     try {
       const data = await AsyncStorage.getItem("todos");
       if (data) {
-        const parsedTodos = JSON.parse(data); // convert string to array
-        setTodos(parsedTodos);
+        setTodos(JSON.parse(data));
       }
     } catch (e) {
       console.log(e);
@@ -38,45 +44,63 @@ const TodoApp = () => {
   const addNewTodo = async () => {
     try {
       if (todoText) {
-        const newTodos = [...todos, todoText];
+        const newTodos = [...todos, { task: todoText, date: currentDate() }];
         setTodos(newTodos);
         await AsyncStorage.setItem("todos", JSON.stringify(newTodos));
-        setTodoText(""); // input khali krny k liye
+        setTodoText("");
       }
     } catch (e) {
-      console.log(e);
+      console.log("Error=====>", e);
     }
   };
 
-  // All todos delete from async storage
+  //  ❌ All todos delete from async storage❌
   const clearTodos = async () => {
     try {
       await AsyncStorage.clear();
-      setTodos([]); // State ko empty karna
+      setTodos([]);
       console.log("All todos cleared!");
     } catch (e) {
       console.log(e);
     }
   };
 
-  // current date generator
+  // 📅 current date generator 📅
   const currentDate = () => {
-    const newdate = new Date();
-    const date = newdate.toLocaleDateString();
-    const time = newdate.toLocaleTimeString();
-    // console.log("date==>", );
-    return date + " " + time;
+    const newDate = new Date();
+
+    // Numeric Date
+    const date = newDate.getDate().toString().padStart(2, "0"); // Ensures two-digit format
+
+    // Month Short Name
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[newDate.getMonth()];
+
+    // Hours, Minutes, and AM/PM
+    let hours = newDate.getHours();
+    const minutes = newDate.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // Convert 24-hour format to 12-hour format
+
+    return `${date} ${month} ${hours}:${minutes} ${ampm}`;
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 20,
-        backgroundColor: "white",
-      }}
-    >
-      {/* text input */}
+    <View style={styles.container}>
+      {/* Input Field  */}
       <TextInput
         onChangeText={(text) => setTodoText(text)}
         value={todoText}
@@ -99,84 +123,114 @@ const TodoApp = () => {
         }
       />
 
-      {/* todos shown here  */}
+      {/* <Text style={styles.heading}>Your Todo's</Text> */}
 
-      <ScrollView style={{ marginTop: 10 }}>
-        {/* heading */}
-        <Text
-          style={{
-            marginBottom: 10,
-            fontSize: 25,
-            textAlign: "center",
-            fontWeight: "bold",
-            color: "#FFD700",
-            textShadowColor: "rgb(41, 38, 38)", // Outline color
-            textShadowOffset: { width: 1, height: 1 }, // Outline thickness
-            textShadowRadius: 1.5, // Blur effect
-          }}
-        >
-          Your Todo's
-        </Text>
+      {/* ❌❌❌   */}
+      <Button
+        mode="contained"
+        buttonColor="#ffd100"
+        onPress={clearTodos}
+        textColor="black"
+        style={styles.todosDelBtn}
+      >
+        Clear All Todos
+      </Button>
 
-        {/* <Button
-          mode="contained"
-          buttonColor="#ffd100"
-          onPress={clearTodos}
-          textColor="black"
-          style={{ marginTop: 10 }}
-        >
-          Clear All Todos
-        </Button> */}
-
-        {/* todos <Text key={index}>{txt}</Text> */}
+      <ScrollView style={styles.todosscroller}>
         {todos.length > 0 ? (
-          todos.map((txt, index) => (
-            <Pressable
+          todos.map((item, index) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
               key={index}
-              style={{
-                margin: 3,
-                marginTop: 5,
-                backgroundColor: "white",
-                borderLeftColor: "gold",
-                borderLeftWidth: 3,
-                elevation: 3,
-                padding: 10,
-                borderRadius: 10,
-                textTransform: "uppercase",
-              }}
-              onLongPress={() => setVisible(true)}
+              style={styles.taskBtn}
+              onPress={() =>
+                setVisible((prev) => ({ ...prev, [index]: !prev[index] }))
+              } // ✅ Toggle only this todo
             >
-              <Text
-                key={index}
-                style={{
-                  textTransform: "capitalize",
-                  textAlign: "justify",
-                }}
+              <Text style={styles.taskText}>{item.task}</Text>
+
+              {/* Bottom bar of task */}
+              <View
+                style={
+                  visible[index] ? styles.taskBottomShow : styles.taskBottomHide
+                }
               >
-                {txt}
-              </Text>
-            </Pressable>
+                {/* task date */}
+                <Text style={styles.taskDate}>{item.date}</Text>
+
+                {/* icons wrapper */}
+                <View style={{ flexDirection: "row", gap: 3 }}>
+                  <TouchableOpacity>
+                    <Icon source="pencil" color={"crimson"} size={20} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity>
+                    <Icon
+                      source="checkbox-marked-outline"
+                      color={"crimson"}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Icon source="delete-forever" color={"crimson"} size={20} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
           ))
         ) : (
-          <Text>No tasks added yet</Text>
+          <Text style={styles.heading}>No tasks added yet</Text>
         )}
-
-        {/* dialog */}
-        <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            {/* <Dialog.Title>Alert</Dialog.Title> */}
-            <Dialog.Content>
-              <Text variant="bodyMedium">This is simple dialog</Text>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={hideDialog}>Done</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-        {/* dialog */}
       </ScrollView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "white" },
+  heading: {
+    marginTop: 15,
+    fontSize: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "crimson",
+    textShadowColor: "rgb(41, 38, 38)",
+    textShadowOffset: { width: 0.5, height: 0.5 },
+    textShadowRadius: 0.5,
+    textTransform: "capitalize",
+  },
+  todosscroller: {},
+  taskBtn: {
+    margin: 3,
+    marginTop: 6,
+    backgroundColor: "white",
+    borderColor: "gold",
+    borderLeftWidth: 3,
+    borderRightWidth: 3,
+    elevation: 3,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+  taskText: {
+    textTransform: "capitalize",
+    textAlign: "justify",
+    marginVertical: 8,
+  },
+  todosDelBtn: { marginTop: 10 },
+  taskBottomShow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+    opacity: 1,
+    transition: "opacity 0.3s ease-in-out", // ✅ Smooth transition
+  },
+  taskBottomHide: {
+    display: "none",
+    opacity: 0,
+  },
+  taskDate: { color: "#888", fontSize: 12 },
+});
 
 export default TodoApp;

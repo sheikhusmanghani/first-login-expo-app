@@ -23,7 +23,19 @@ export default function App() {
             <Stack.Screen
               name="MainApp"
               component={TodoApp}
-              options={{ headerStyle: { backgroundColor: "gold" } }}
+              options={{
+                headerStyle: { backgroundColor: "gold" },
+                headerTitleAlign: "center",
+                title: "Today's Tasks",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                  fontSize: 25,
+                  fontFamily: "serif",
+                  textShadowColor: "rgb(41, 41, 38)",
+                  textShadowOffset: { width: 0.5, height: 0.5 },
+                  textShadowRadius: 0.5,
+                },
+              }}
             />
             {/* <Stack.Screen name="Home" component={Home} /> */}
           </Stack.Navigator>
