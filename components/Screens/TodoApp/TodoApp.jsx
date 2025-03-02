@@ -44,7 +44,7 @@ const TodoApp = () => {
   const addNewTodo = async () => {
     try {
       if (todoText) {
-        const newTodos = [...todos, { task: todoText, date: currentDate() }];
+        const newTodos = [{ task: todoText, date: currentDate() }, ...todos];
         setTodos(newTodos);
         await AsyncStorage.setItem("todos", JSON.stringify(newTodos));
         setTodoText("");
@@ -98,11 +98,37 @@ const TodoApp = () => {
     return `${date} ${month} ${hours}:${minutes} ${ampm}`;
   };
 
+  // ❎ An specific todo delete
+  const handleDeleteTodo = (index) => {
+    console.log("=====>>>", "clickde");
+    const updatedTodos = todos.filter((item, itemIndex) => {
+      return itemIndex !== index;
+    });
+    // state bhi update krni hoti hy
+    setTodos(updatedTodos);
+    AsyncStorage.setItem("todos", JSON.stringify(updatedTodos));
+  };
+
+  // 📝 edit todo 🖊
+  const handleEditTodo = async (index) => {
+    console.log("edit====>");
+    // const editedTodo = [{ task: todoText, date: currentDate() }, ...todos];
+    //  setTodos(editedTodo);
+    //   await AsyncStorage.setItem("todos", JSON.stringify(editedTodo));
+    //   setTodoText("");
+  };
+
+  // ✅ todo check
+  const handleCheckTodo = (index) => {
+    console.log("check");
+  };
+
   return (
     <View style={styles.container}>
       {/* Input Field  */}
       <TextInput
         onChangeText={(text) => setTodoText(text)}
+        onSubmitEditing={addNewTodo}
         value={todoText}
         label="What's Your Task..."
         mode="outlined"
@@ -158,20 +184,35 @@ const TodoApp = () => {
                 {/* task date */}
                 <Text style={styles.taskDate}>{item.date}</Text>
 
-                {/* icons wrapper */}
                 <View style={{ flexDirection: "row", gap: 3 }}>
-                  <TouchableOpacity>
+                  {/* edit todo icon */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleEditTodo(index);
+                    }}
+                  >
                     <Icon source="pencil" color={"crimson"} size={20} />
                   </TouchableOpacity>
 
-                  <TouchableOpacity>
+                  {/* check todo icon */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleCheckTodo(index);
+                    }}
+                  >
                     <Icon
                       source="checkbox-marked-outline"
                       color={"crimson"}
                       size={20}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity>
+
+                  {/* delete todo icon */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleDeleteTodo(index);
+                    }}
+                  >
                     <Icon source="delete-forever" color={"crimson"} size={20} />
                   </TouchableOpacity>
                 </View>
@@ -216,7 +257,7 @@ const styles = StyleSheet.create({
     textAlign: "justify",
     marginVertical: 8,
   },
-  todosDelBtn: { marginTop: 10 },
+  todosDelBtn: { marginVertical: 5 },
   taskBottomShow: {
     display: "flex",
     flexDirection: "row",
